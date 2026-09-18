@@ -1,0 +1,572 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>เกมเรียงลำดับคำศัพท์</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans Thai", "Tahoma", sans-serif;
+      background:
+        radial-gradient(circle at top left, #fff4d6, transparent 35%),
+        radial-gradient(circle at bottom right, #dff4ff, transparent 35%),
+        #f7f8fc;
+      color: #202124;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 35px 0 50px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header h1 {
+      font-size: clamp(30px, 6vw, 52px);
+      margin: 0 0 10px;
+      font-weight: 900;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+      font-size: 17px;
+    }
+
+    .game-panel {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #e8e8ee;
+      border-radius: 28px;
+      padding: 25px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .progress-box {
+      background: #f2f3f7;
+      padding: 12px 18px;
+      border-radius: 15px;
+      font-weight: 800;
+    }
+
+    .reset-button {
+      border: none;
+      background: #202124;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .reset-button:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .words-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+
+    .word-card {
+      position: relative;
+      min-height: 125px;
+      border: 3px solid #e5e6ec;
+      border-radius: 20px;
+      background: white;
+      padding: 25px 12px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      overflow: hidden;
+    }
+
+    .word-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .word {
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .rank-number {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #e5e6ec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    /* ถูก */
+    .word-card.correct {
+      background: #eaf9ee;
+      border-color: #29a653;
+      cursor: default;
+    }
+
+    .word-card.correct .rank-number {
+      background: #29a653;
+      color: white;
+    }
+
+    /* ผิด */
+    .word-card.wrong {
+      background: #fff0f0;
+      border-color: #e33d3d;
+      animation: shake 0.25s;
+    }
+
+    .word-card.wrong .rank-number {
+      background: #e33d3d;
+      color: white;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    .reason {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #24783f;
+      font-weight: 600;
+    }
+
+    .wrong-message {
+      margin-top: 20px;
+      text-align: center;
+      color: #d52f2f;
+      font-weight: 800;
+      min-height: 25px;
+    }
+
+    .finish {
+      display: none;
+      margin-top: 25px;
+      padding: 28px;
+      text-align: center;
+      border-radius: 22px;
+      background: #edfff2;
+      border: 2px solid #8bd49e;
+    }
+
+    .finish.show {
+      display: block;
+    }
+
+    .finish h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .finish p {
+      margin: 0 0 18px;
+      color: #397049;
+    }
+
+    .again-button {
+      border: none;
+      background: #29a653;
+      color: white;
+      padding: 13px 22px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    @media (max-width: 850px) {
+      .words-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .words-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .word {
+        font-size: 19px;
+      }
+
+      .word-card {
+        min-height: 110px;
+      }
+
+      .game-panel {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <h1>🎯 เรียงลำดับคำศัพท์</h1>
+      <p>
+        คลิกคำศัพท์ตามลำดับที่คิดว่าถูกต้อง
+        <br>
+        คลิกครั้งที่ 1 = อันดับ 1
+      </p>
+    </div>
+
+    <div class="game-panel">
+
+      <div class="game-info">
+
+        <div class="progress-box">
+          📌 <span id="progress">อันดับถัดไป: 1</span>
+        </div>
+
+        <button class="reset-button" onclick="resetGame()">
+          🔄 รีเซ็ต / เรียงคำใหม่
+        </button>
+
+      </div>
+
+      <div id="wordsGrid" class="words-grid"></div>
+
+      <div id="wrongMessage" class="wrong-message"></div>
+
+      <div id="finish" class="finish">
+
+        <h2>🎉 เรียงครบทั้ง 10 อันดับแล้ว!</h2>
+
+        <p>
+          คุณเรียงคำศัพท์ได้ถูกต้องทั้งหมด
+        </p>
+
+        <button class="again-button" onclick="resetGame()">
+          🔄 เล่นอีกครั้ง
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+  /*
+    ลำดับคำศัพท์ของเกม
+  */
+
+  const vocabulary = [
+
+    {
+      rank: 1,
+      word: "สเต๊ก",
+      reason:
+        "พบเห็นบ่อยในเมนูอาหาร ป้ายร้าน และโฆษณา ทำให้ผู้คนคุ้นเคยกับคำนี้และมีโอกาสพบรูปสะกดที่หลากหลายสูง"
+    },
+
+    {
+      rank: 2,
+      word: "เฟซบุ๊ก",
+      reason:
+        "เป็นคำที่ใช้ในชีวิตประจำวันและสื่อออนไลน์อย่างแพร่หลาย จึงมีโอกาสพบการสะกดคลาดเคลื่อนจำนวนมาก"
+    },
+
+    {
+      rank: 3,
+      word: "คอมเมนต์",
+      reason:
+        "ใช้บ่อยในโซเชียลมีเดีย โดยเฉพาะช่องแสดงความคิดเห็น ทำให้พบรูปสะกดที่คลาดเคลื่อนได้เป็นจำนวนมาก"
+    },
+
+    {
+      rank: 4,
+      word: "ลิงก์",
+      reason:
+        "ใช้เป็นประจำในเว็บไซต์ เอกสาร และการสื่อสารออนไลน์ แต่มีบริบทการใช้งานแคบกว่าคำในอันดับต้น ๆ"
+    },
+
+    {
+      rank: 5,
+      word: "บูท",
+      reason:
+        "มักใช้ในงานแสดงสินค้า นิทรรศการ และกิจกรรมต่าง ๆ จึงพบมากในบางบริบท แต่ไม่ครอบคลุมการใช้ภาษาในชีวิตประจำวันทั้งหมด"
+    },
+
+    {
+      rank: 6,
+      word: "เวิร์กชอป",
+      reason:
+        "พบในงานอบรม สัมมนา และกิจกรรมการเรียนรู้เป็นหลัก จึงมีการใช้งานเฉพาะบริบทมากกว่าคำอันดับก่อนหน้า"
+    },
+
+    {
+      rank: 7,
+      word: "แมป",
+      reason:
+        "พบมากในบริบทเกม เทคโนโลยี และการใช้งานออนไลน์บางกลุ่ม จึงมีการใช้จำกัดอยู่ในกลุ่มผู้ใช้เฉพาะทางมากกว่า"
+    },
+
+    {
+      rank: 8,
+      word: "สถาปัตย์",
+      reason:
+        "เป็นคำที่เกี่ยวข้องกับวงการสถาปัตยกรรมและกลุ่มนักศึกษาเป็นหลัก จึงพบในภาษาทั่วไปน้อยกว่าคำที่อยู่ในอันดับต้น ๆ"
+    },
+
+    {
+      rank: 9,
+      word: "อยู่ดีกินดี",
+      reason:
+        "เป็นการเล่นคำที่เกิดขึ้นเฉพาะในบางแคมเปญหรือกิจกรรม จึงไม่ได้มีการใช้แพร่หลายในชีวิตประจำวันเหมือนคำอื่น"
+    },
+
+    {
+      rank: 10,
+      word: "นมสด",
+      reason:
+        "เป็นคำที่ถูกนำไปดัดแปลงเป็นคำเล่นในบางร้านหรือแคมเปญการตลาด จึงพบเฉพาะกรณีและไม่ใช่การสะกดผิดที่เกิดขึ้นทั่วไป"
+    }
+
+  ];
+
+
+  let nextRank = 1;
+
+
+  /*
+    สุ่มคำศัพท์
+  */
+
+  function shuffle(array) {
+
+    return [...array].sort(() => Math.random() - 0.5);
+
+  }
+
+
+  /*
+    เริ่มเกม
+  */
+
+  function startGame() {
+
+    nextRank = 1;
+
+    document.getElementById("progress").textContent =
+      "อันดับถัดไป: 1";
+
+    document.getElementById("wrongMessage").textContent = "";
+
+    document.getElementById("finish").classList.remove("show");
+
+    const grid = document.getElementById("wordsGrid");
+
+    grid.innerHTML = "";
+
+
+    shuffle(vocabulary).forEach(item => {
+
+      const card = document.createElement("div");
+
+      card.className = "word-card";
+
+      card.dataset.rank = item.rank;
+
+      card.innerHTML = `
+
+        <div class="rank-number">–</div>
+
+        <div class="word">
+          ${item.word}
+        </div>
+
+      `;
+
+
+      card.addEventListener("click", function() {
+
+        selectWord(card, item);
+
+      });
+
+
+      grid.appendChild(card);
+
+    });
+
+  }
+
+
+  /*
+    เมื่อผู้เล่นคลิกคำ
+  */
+
+  function selectWord(card, item) {
+
+    // ถ้าคำนี้ถูกแล้ว ห้ามคลิกซ้ำ
+
+    if (card.classList.contains("correct")) {
+      return;
+    }
+
+
+    /*
+      ตรวจว่าคำนี้เป็นอันดับที่กำลังต้องการหรือไม่
+    */
+
+    if (item.rank === nextRank) {
+
+      // ถูกต้อง
+
+      card.classList.remove("wrong");
+
+      card.classList.add("correct");
+
+
+      card.querySelector(".rank-number").textContent =
+        nextRank;
+
+
+      /*
+        แสดงเหตุผลใต้คำ
+      */
+
+      card.querySelector(".word").innerHTML = `
+
+        ${item.word}
+
+        <div class="reason">
+          เหตุผล: ${item.reason}
+        </div>
+
+      `;
+
+
+      document.getElementById("wrongMessage").textContent = "";
+
+
+      nextRank++;
+
+
+      if (nextRank <= vocabulary.length) {
+
+        document.getElementById("progress").textContent =
+          "อันดับถัดไป: " + nextRank;
+
+      }
+
+
+      /*
+        จบเกมเมื่อถูกครบ 10 ข้อ
+      */
+
+      if (nextRank > vocabulary.length) {
+
+        document.getElementById("progress").textContent =
+          "ครบทั้ง 10 อันดับแล้ว 🎉";
+
+        document.getElementById("finish")
+          .classList.add("show");
+
+      }
+
+    }
+
+    else {
+
+      /*
+        ผิด
+      */
+
+      card.classList.add("wrong");
+
+      card.querySelector(".rank-number").textContent = "✕";
+
+
+      document.getElementById("wrongMessage").textContent =
+        "❌ ยังไม่ใช่อันดับ " + nextRank + " ลองใหม่อีกครั้ง";
+
+
+      /*
+        หลังจากครึ่งวินาที กลับเป็นสถานะปกติ
+      */
+
+      setTimeout(() => {
+
+        card.classList.remove("wrong");
+
+        card.querySelector(".rank-number").textContent = "–";
+
+      }, 600);
+
+    }
+
+  }
+
+
+  /*
+    ปุ่มรีเซ็ต
+  */
+
+  function resetGame() {
+
+    startGame();
+
+  }
+
+
+  /*
+    เริ่มเกมครั้งแรก
+  */
+
+  startGame();
+
+</script>
+
+</body>
+</html>
+```
