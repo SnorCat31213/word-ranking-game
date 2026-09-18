@@ -1,504 +1,1124 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เกมเรียงคำให้ถูก</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      maximum-scale=1.0, user-scalable=no">
 
-  <style>
-    * {
-      box-sizing: border-box;
+<title>เกมจัดอันดับคำภาษาไทย</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", "Noto Sans Thai", sans-serif;
+}
+
+body {
+    background:
+        radial-gradient(circle at top left, #fff8df, transparent 35%),
+        radial-gradient(circle at bottom right, #ffe5d1, transparent 35%),
+        linear-gradient(135deg, #f7efe3, #fffaf3);
+
+    color: #3d3027;
+    overflow: hidden;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.game {
+    width: 100%;
+    height: 100vh;
+    padding: 18px 28px 16px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 10px;
+}
+
+.title-area h1 {
+    margin: 0;
+
+    font-size: clamp(25px, 3vw, 40px);
+    font-weight: 900;
+
+    color: #5a3926;
+    letter-spacing: -1px;
+}
+
+.title-area p {
+    margin: 3px 0 0;
+
+    font-size: clamp(12px, 1.2vw, 16px);
+    color: #907565;
+}
+
+.score-box {
+    min-width: 150px;
+
+    padding: 10px 18px;
+
+    border-radius: 18px;
+
+    background: rgba(255,255,255,.75);
+    border: 1px solid #eadac9;
+
+    text-align: center;
+
+    box-shadow: 0 8px 25px rgba(90,57,38,.08);
+}
+
+.score-label {
+    font-size: 11px;
+    color: #9b806d;
+}
+
+.score {
+    font-size: 25px;
+    font-weight: 900;
+    color: #b66b38;
+}
+
+/* =========================
+   INSTRUCTION
+========================= */
+
+.instruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 7px 15px;
+    margin-bottom: 8px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.82);
+    border: 1px solid #eadaca;
+
+    color: #705a4a;
+
+    font-size: clamp(12px, 1.2vw, 15px);
+    text-align: center;
+
+    box-shadow: 0 5px 18px rgba(80,50,30,.05);
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 30px;
+    margin-bottom: 7px;
+
+    font-size: clamp(13px, 1.3vw, 17px);
+    font-weight: 700;
+
+    color: #785c49;
+}
+
+.status strong {
+    color: #b96835;
+    margin: 0 4px;
+}
+
+/* =========================
+   BOARD
+========================= */
+
+.board {
+    flex: 1;
+
+    display: grid;
+
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    min-height: 0;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 8px;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.94);
+    border: 2px solid #eadbca;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(90,57,38,.07);
+
+    transition:
+        transform .16s ease,
+        box-shadow .16s ease,
+        border-color .16s ease,
+        background .16s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+
+    border-color: #d5b49a;
+
+    box-shadow:
+        0 10px 22px rgba(90,57,38,.12);
+}
+
+.card:active {
+    transform: scale(.97);
+}
+
+/* Selected */
+
+.card.selected {
+    background: #fff4e5;
+    border-color: #d79b68;
+
+    box-shadow:
+        0 0 0 3px rgba(215,155,104,.12),
+        0 10px 25px rgba(160,100,55,.12);
+}
+
+/* Correct */
+
+.card.correct {
+    background: #edf9ef;
+    border-color: #67b579;
+
+    cursor: default;
+
+    box-shadow:
+        0 8px 20px rgba(72,145,86,.13);
+}
+
+.card.correct:hover {
+    transform: none;
+}
+
+/* Wrong */
+
+.card.wrong {
+    animation: wrongFlash .7s ease;
+}
+
+@keyframes wrongFlash {
+    0% {
+        background: #fff;
+        border-color: #eadbca;
     }
+
+    25% {
+        background: #ffe2e2;
+        border-color: #e46d6d;
+        transform: scale(.97);
+    }
+
+    60% {
+        background: #ffe2e2;
+        border-color: #e46d6d;
+    }
+
+    100% {
+        background: #fff;
+        border-color: #eadbca;
+        transform: scale(1);
+    }
+}
+
+/* =========================
+   NUMBER
+========================= */
+
+.number {
+    position: absolute;
+    top: 8px;
+    left: 9px;
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f2e5d7;
+    color: #896b55;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.card.selected .number {
+    background: #c87943;
+    color: white;
+}
+
+.card.correct .number {
+    background: #54a567;
+    color: white;
+}
+
+/* =========================
+   WORD
+========================= */
+
+.word {
+    margin-top: 5px;
+
+    font-size: clamp(16px, 1.8vw, 24px);
+    font-weight: 900;
+
+    text-align: center;
+
+    color: #493429;
+
+    word-break: keep-all;
+}
+
+/* =========================
+   ANSWER
+========================= */
+
+.answer {
+    margin-top: 4px;
+
+    font-size: clamp(11px, 1.1vw, 14px);
+    font-weight: 800;
+
+    color: #3e9151;
+    text-align: center;
+}
+
+.reason {
+    margin-top: 2px;
+
+    max-width: 90%;
+
+    font-size: clamp(9px, .85vw, 11px);
+    line-height: 1.25;
+
+    color: #6d806f;
+    text-align: center;
+}
+
+/* =========================
+   BOTTOM
+========================= */
+
+.bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    min-height: 48px;
+
+    margin-top: 9px;
+}
+
+button {
+    border: 0;
+
+    padding: 11px 25px;
+
+    border-radius: 13px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        opacity .15s ease;
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+.check-btn {
+    background: #bd7040;
+    color: white;
+
+    box-shadow:
+        0 7px 17px rgba(189,112,64,.25);
+}
+
+.check-btn:hover {
+    box-shadow:
+        0 10px 22px rgba(189,112,64,.32);
+}
+
+.reset-btn {
+    background: white;
+    color: #765b48;
+
+    border: 1px solid #dfcfbf;
+}
+
+button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+/* =========================
+   COMPLETE
+========================= */
+
+.complete {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(63,43,30,.38);
+    backdrop-filter: blur(7px);
+
+    z-index: 100;
+}
+
+.complete.show {
+    display: flex;
+}
+
+.complete-box {
+    width: min(430px, 90vw);
+
+    padding: 35px 28px;
+
+    border-radius: 25px;
+
+    background: #fffaf4;
+
+    text-align: center;
+
+    box-shadow:
+        0 25px 70px rgba(50,30,15,.25);
+}
+
+.trophy {
+    font-size: 55px;
+}
+
+.complete-box h2 {
+    margin: 8px 0 5px;
+
+    font-size: 29px;
+
+    color: #573b29;
+}
+
+.final-score {
+    margin: 8px 0 20px;
+
+    font-size: 20px;
+    font-weight: 900;
+
+    color: #b96c38;
+}
+
+/* =========================
+   TABLET / PORTRAIT
+========================= */
+
+@media (max-width: 900px) {
 
     body {
-      margin: 0;
-      font-family: Arial, "Noto Sans Thai", sans-serif;
-      background: linear-gradient(135deg, #fff8e7, #f5efe2);
-      color: #333;
-      min-height: 100vh;
+        overflow: auto;
     }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 30px 18px 50px;
+    .game {
+        height: auto;
+        min-height: 100vh;
+
+        padding: 18px;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+    .board {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: none;
 
-    h1 {
-      font-size: 38px;
-      margin: 0 0 10px;
-      color: #5b4636;
-    }
-
-    .subtitle {
-      font-size: 17px;
-      color: #777;
-      line-height: 1.6;
-    }
-
-    .instruction {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 25px;
-      text-align: center;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-      border: 2px solid #eadfce;
-    }
-
-    .instruction strong {
-      color: #b06b35;
-    }
-
-    .progress {
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      margin: 18px 0;
-      color: #5b4636;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+        flex: none;
     }
 
     .card {
-      position: relative;
-      background: white;
-      border: 3px solid #e4d7c5;
-      border-radius: 18px;
-      padding: 25px 18px;
-      min-height: 130px;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.07);
-      text-align: center;
+        min-height: 135px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .header {
+        align-items: flex-start;
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: #c99b68;
+    .title-area h1 {
+        font-size: 25px;
     }
 
-    .card.selected {
-      border-color: #8b6b4a;
-      background: #f8f0e4;
-    }
-
-    .rank {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #8b6b4a;
-      color: white;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-      font-weight: bold;
-    }
-
-    .card.selected .rank {
-      display: flex;
-    }
-
-    .wrong-word {
-      font-size: 23px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: #4d3b2e;
-    }
-
-    .arrow {
-      font-size: 20px;
-      color: #999;
-    }
-
-    .correct-word {
-      display: none;
-    }
-
-    .reason {
-      display: none;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(0,0,0,0.1);
-      font-size: 15px;
-      line-height: 1.6;
-      text-align: left;
-    }
-
-    /* หลังเฉลย */
-    .card.correct {
-      border-color: #55a36a;
-      background: #edf8ef;
-    }
-
-    .card.correct .rank {
-      background: #55a36a;
-    }
-
-    .card.correct .correct-word {
-      display: inline;
-      font-weight: bold;
-      color: #27743b;
-    }
-
-    .card.correct .reason {
-      display: block;
-      color: #45604b;
-    }
-
-    .card.incorrect {
-      border-color: #d16b6b;
-      background: #fff0f0;
-    }
-
-    .card.incorrect .rank {
-      background: #d16b6b;
-    }
-
-    .card.incorrect .correct-word {
-      display: inline;
-      font-weight: bold;
-      color: #b53d3d;
-    }
-
-    .card.incorrect .reason {
-      display: block;
-      color: #704545;
-    }
-
-    .buttons {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    button {
-      border: none;
-      border-radius: 14px;
-      padding: 14px 28px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin: 5px;
-    }
-
-    #answerBtn {
-      background: #5b4636;
-      color: white;
-      display: none;
-    }
-
-    #answerBtn:hover {
-      background: #453429;
-    }
-
-    #resetBtn {
-      background: #d8c2a8;
-      color: #4d3b2e;
-    }
-
-    #resetBtn:hover {
-      background: #cdb393;
+    .score-box {
+        min-width: 90px;
+        padding: 7px 10px;
     }
 
     .score {
-      display: none;
-      text-align: center;
-      margin: 25px 0;
-      font-size: 25px;
-      font-weight: bold;
-      color: #5b4636;
+        font-size: 20px;
     }
 
-    .message {
-      display: none;
-      text-align: center;
-      margin-top: 10px;
-      font-size: 18px;
-      font-weight: bold;
+    .instruction {
+        line-height: 1.4;
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 30px;
-      }
-
-      .cards {
+    .board {
         grid-template-columns: 1fr;
-      }
-
-      .card {
-        min-height: 115px;
-      }
     }
-  </style>
+
+    .card {
+        min-height: 125px;
+    }
+
+    .bottom {
+        flex-wrap: wrap;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="game">
 
-  <header>
-    <h1>🔎 ล่าคำที่ถูกต้อง</h1>
-    <div class="subtitle">
-      เกมเรียงลำดับคำที่มักเขียนผิด
+    <!-- HEADER -->
+    <header class="header">
+
+        <div class="title-area">
+            <h1>🎯 เกมจัดอันดับคำภาษาไทย</h1>
+            <p>เรียงคำที่กำหนดให้ตามอันดับที่ถูกต้อง</p>
+        </div>
+
+        <div class="score-box">
+            <div class="score-label">คะแนน</div>
+            <div class="score">
+                <span id="score">0</span> / 10
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- INSTRUCTION -->
+    <div class="instruction">
+        👆 คลิกคำตามลำดับที่คิดว่าถูกต้อง ตั้งแต่ <b>อันดับ 1 → 10</b>
+        แล้วกด “เฉลย”
     </div>
-  </header>
 
-  <div class="instruction">
-    <strong>วิธีเล่น</strong><br>
-    คลิกเลือกคำตามลำดับที่คิดว่า “พบการเขียนผิดบ่อยที่สุด”<br>
-    เลือกให้ครบ <strong>1–10</strong> ก่อน แล้วจึงกด <strong>เฉลย</strong>
-  </div>
 
-  <div class="progress" id="progress">
-    เลือกแล้ว 0 / 10
-  </div>
+    <!-- STATUS -->
+    <div class="status" id="status">
+        เลือกคำ <strong>1</strong> จากทั้งหมด 10 คำ
+    </div>
 
-  <div class="cards" id="cards"></div>
 
-  <div class="score" id="score"></div>
+    <!-- GAME BOARD -->
+    <main class="board" id="board"></main>
 
-  <div class="message" id="message"></div>
 
-  <div class="buttons">
-    <button id="answerBtn" onclick="showAnswer()">
-      🔍 เฉลย
-    </button>
+    <!-- BUTTONS -->
+    <div class="bottom">
 
-    <button id="resetBtn" onclick="resetGame()">
-      🔄 เล่นอีกครั้ง
-    </button>
-  </div>
+        <button
+            class="check-btn"
+            id="checkBtn"
+            onclick="checkAnswers()"
+            disabled>
+            🔍 เฉลย
+        </button>
+
+        <button
+            class="reset-btn"
+            onclick="newGame()">
+            🔄 เกมใหม่
+        </button>
+
+    </div>
 
 </div>
 
+
+<!-- COMPLETE -->
+<div class="complete" id="complete">
+
+    <div class="complete-box">
+
+        <div class="trophy">🏆</div>
+
+        <h2>ยอดเยี่ยม!</h2>
+
+        <div class="final-score" id="finalScore">
+            ได้ 10 / 10 คะแนน
+        </div>
+
+        <button
+            class="check-btn"
+            onclick="newGame()">
+            🎮 เล่นเกมใหม่
+        </button>
+
+    </div>
+
+</div>
+
+
 <script>
 
-const words = [
-  {
-    wrong: "สเต็ก",
-    correct: "สเต๊ก",
-    reason: "พบเห็นบ่อยในเมนูอาหาร ป้ายร้าน และโฆษณา ทำให้ผู้คนคุ้นเคยกับคำนี้และมีโอกาสพบรูปสะกดที่หลากหลายสูง"
-  },
-  {
-    wrong: "เฟสบุ๊ค",
-    correct: "เฟซบุ๊ก",
-    reason: "เป็นคำที่ใช้ในชีวิตประจำวันและสื่อออนไลน์อย่างแพร่หลาย จึงมีโอกาสพบการสะกดคลาดเคลื่อนจำนวนมาก"
-  },
-  {
-    wrong: "คอมเม้นต์",
-    correct: "คอมเมนต์",
-    reason: "ใช้บ่อยในโซเชียลมีเดีย โดยเฉพาะช่องแสดงความคิดเห็น ทำให้พบรูปสะกดที่คลาดเคลื่อนได้เป็นจำนวนมาก"
-  },
-  {
-    wrong: "ลิงค์",
-    correct: "ลิงก์",
-    reason: "ใช้เป็นประจำในเว็บไซต์ เอกสาร และการสื่อสารออนไลน์ แต่มีบริบทการใช้งานแคบกว่าคำในอันดับต้น ๆ"
-  },
-  {
-    wrong: "บูธ",
-    correct: "บูท",
-    reason: "มักใช้ในงานแสดงสินค้า นิทรรศการ และกิจกรรมต่าง ๆ จึงพบมากในบางบริบท แต่ไม่ครอบคลุมการใช้ภาษาในชีวิตประจำวันทั้งหมด"
-  },
-  {
-    wrong: "เวิร์กช็อป",
-    correct: "เวิร์กชอป",
-    reason: "พบในงานอบรม สัมมนา และกิจกรรมการเรียนรู้เป็นหลัก จึงมีการใช้งานเฉพาะบริบทมากกว่าคำอันดับก่อนหน้า"
-  },
-  {
-    wrong: "แมพ",
-    correct: "แมป",
-    reason: "พบมากในบริบทเกม เทคโนโลยี และการใช้งานออนไลน์บางกลุ่ม จึงมีการใช้จำกัดอยู่ในกลุ่มผู้ใช้เฉพาะทางมากกว่า"
-  },
-  {
-    wrong: "ถาปัตย์",
-    correct: "สถาปัตย์",
-    reason: "เป็นคำที่เกี่ยวข้องกับวงการสถาปัตยกรรมและกลุ่มนักศึกษาเป็นหลัก จึงพบในภาษาทั่วไปน้อยกว่าคำที่อยู่ในอันดับต้น ๆ"
-  },
-  {
-    wrong: "อยู่ดี กรีนดี",
-    correct: "อยู่ดีกินดี",
-    reason: "เป็นการเล่นคำที่เกิดขึ้นเฉพาะในบางแคมเปญหรือกิจกรรม จึงไม่ได้มีการใช้แพร่หลายในชีวิตประจำวันเหมือนคำอื่น"
-  },
-  {
-    wrong: "นมโสด",
-    correct: "นมสด",
-    reason: "เป็นคำที่ถูกนำไปดัดแปลงเป็นคำเล่นในบางร้านหรือแคมเปญการตลาด จึงพบเฉพาะกรณีและไม่ใช่การสะกดผิดที่เกิดขึ้นทั่วไป"
-  }
+/* =========================================
+   DATA
+========================================= */
+
+const WORDS = [
+
+    {
+        wrong: "สเต็ก",
+        correct: "สเต๊ก",
+        reason:
+            "พบเห็นบ่อยในเมนูอาหาร ป้ายร้าน และโฆษณา"
+    },
+
+    {
+        wrong: "เฟสบุ๊ค",
+        correct: "เฟซบุ๊ก",
+        reason:
+            "เป็นคำที่ใช้แพร่หลายในชีวิตประจำวันและสื่อออนไลน์"
+    },
+
+    {
+        wrong: "คอมเม้นต์",
+        correct: "คอมเมนต์",
+        reason:
+            "ใช้บ่อยในโซเชียลมีเดียและช่องแสดงความคิดเห็น"
+    },
+
+    {
+        wrong: "ลิงค์",
+        correct: "ลิงก์",
+        reason:
+            "พบเป็นประจำในเว็บไซต์ เอกสาร และการสื่อสารออนไลน์"
+    },
+
+    {
+        wrong: "บูธ",
+        correct: "บูท",
+        reason:
+            "มักพบในงานแสดงสินค้า นิทรรศการ และกิจกรรมต่าง ๆ"
+    },
+
+    {
+        wrong: "เวิร์กช็อป",
+        correct: "เวิร์กชอป",
+        reason:
+            "พบมากในงานอบรม สัมมนา และกิจกรรมการเรียนรู้"
+    },
+
+    {
+        wrong: "แมพ",
+        correct: "แมป",
+        reason:
+            "พบในบริบทเกม เทคโนโลยี และการใช้งานออนไลน์"
+    },
+
+    {
+        wrong: "ถาปัตย์",
+        correct: "สถาปัตย์",
+        reason:
+            "เกี่ยวข้องกับวงการสถาปัตยกรรมและกลุ่มนักศึกษาเป็นหลัก"
+    },
+
+    {
+        wrong: "อยู่ดี กรีนดี",
+        correct: "อยู่ดีกินดี",
+        reason:
+            "เป็นการเล่นคำที่พบเฉพาะในบางแคมเปญหรือกิจกรรม"
+    },
+
+    {
+        wrong: "นมโสด",
+        correct: "นมสด",
+        reason:
+            "เป็นคำเล่นที่ใช้ในบางร้านหรือแคมเปญการตลาด"
+    }
+
 ];
 
+
+/* =========================================
+   GAME VARIABLES
+========================================= */
+
 let shuffledWords = [];
-let selectedOrder = [];
-let answered = false;
 
-function shuffle(array) {
-  return [...array].sort(() => Math.random() - 0.5);
+let selected = [];
+
+let solved = new Set();
+
+let score = 0;
+
+
+/* =========================================
+   START GAME
+========================================= */
+
+function newGame() {
+
+    shuffledWords = [...WORDS]
+        .sort(() => Math.random() - 0.5);
+
+    selected = [];
+    solved = new Set();
+    score = 0;
+
+    document
+        .getElementById("complete")
+        .classList.remove("show");
+
+    render();
+    updateStatus();
+    updateScore();
 }
 
-function startGame() {
 
-  shuffledWords = shuffle(words);
-  selectedOrder = [];
-  answered = false;
+/* =========================================
+   RENDER CARDS
+========================================= */
 
-  const cardsContainer = document.getElementById("cards");
+function render() {
 
-  cardsContainer.innerHTML = "";
+    const board =
+        document.getElementById("board");
 
-  document.getElementById("answerBtn").style.display = "none";
-  document.getElementById("score").style.display = "none";
-  document.getElementById("message").style.display = "none";
+    board.innerHTML = "";
 
-  updateProgress();
+    shuffledWords.forEach((item, index) => {
 
-  shuffledWords.forEach((word, index) => {
+        const card =
+            document.createElement("div");
 
-    const card = document.createElement("div");
+        card.className = "card";
 
-    card.className = "card";
+        card.dataset.index = index;
 
-    card.dataset.index = index;
+        card.innerHTML = `
 
-    card.innerHTML = `
-      <div class="rank"></div>
+            <div class="number">
+                ${solved.has(index)
+                    ? "✓"
+                    : getSelectedNumber(index)}
+            </div>
 
-      <div class="wrong-word">
-        ${word.wrong}
-      </div>
+            <div class="word">
+                ${item.wrong}
+            </div>
 
-      <div class="arrow">
-        ↓
-      </div>
+            ${
+                solved.has(index)
+                ?
+                `
+                <div class="answer">
+                    ✓ คำที่ถูก: ${item.correct}
+                </div>
 
-      <div class="correct-word">
-        ${word.correct}
-      </div>
+                <div class="reason">
+                    ${item.reason}
+                </div>
+                `
+                :
+                ""
+            }
+        `;
 
-      <div class="reason">
-        ${word.reason}
-      </div>
-    `;
 
-    card.addEventListener("click", () => selectCard(card, index));
+        if (solved.has(index)) {
 
-    cardsContainer.appendChild(card);
-  });
+            card.classList.add("correct");
+
+        }
+
+
+        if (
+            selected.some(
+                item => item.index === index
+            )
+        ) {
+
+            card.classList.add("selected");
+
+        }
+
+
+        if (!solved.has(index)) {
+
+            card.onclick = () =>
+                selectCard(index);
+
+        }
+
+
+        board.appendChild(card);
+
+    });
+
+
+    const checkBtn =
+        document.getElementById("checkBtn");
+
+    checkBtn.disabled =
+        selected.length !==
+        getRemainingCount();
+
 }
 
-function selectCard(card, index) {
 
-  // ถ้าเฉลยแล้ว ห้ามเลือกเพิ่ม
-  if (answered) return;
+/* =========================================
+   GET SELECTED NUMBER
+========================================= */
 
-  // ถ้าเลือกใบนี้ไปแล้ว ไม่ต้องทำอะไร
-  if (selectedOrder.includes(index)) return;
+function getSelectedNumber(index) {
 
-  // เพิ่มลำดับ
-  selectedOrder.push(index);
+    const found =
+        selected.find(
+            item => item.index === index
+        );
 
-  const rankNumber = selectedOrder.length;
+    if (!found) return "";
 
-  card.classList.add("selected");
-
-  card.querySelector(".rank").textContent = rankNumber;
-
-  updateProgress();
-
-  // เมื่อเลือกครบ 10 คำ
-  if (selectedOrder.length === words.length) {
-
-    document.getElementById("answerBtn").style.display = "inline-block";
-
-    document.getElementById("progress").textContent =
-      "เลือกครบ 10 คำแล้ว — พร้อมเฉลย 🎉";
-  }
+    return found.number;
 }
 
-function updateProgress() {
 
-  if (selectedOrder.length < words.length) {
+/* =========================================
+   SELECT CARD
+========================================= */
 
-    document.getElementById("progress").textContent =
-      `เลือกแล้ว ${selectedOrder.length} / ${words.length}`;
-  }
-}
+function selectCard(index) {
 
-function showAnswer() {
+    if (solved.has(index)) return;
 
-  if (selectedOrder.length !== words.length) return;
-
-  answered = true;
-
-  let score = 0;
-
-  const cards = document.querySelectorAll(".card");
-
-  selectedOrder.forEach((wordIndex, position) => {
-
-    const card = cards[wordIndex];
-
-    const correctPosition = words.indexOf(shuffledWords[wordIndex]) + 1;
-
-    if (position + 1 === correctPosition) {
-
-      card.classList.remove("selected");
-      card.classList.add("correct");
-
-      score++;
-
-    } else {
-
-      card.classList.remove("selected");
-      card.classList.add("incorrect");
+    if (
+        selected.some(
+            item => item.index === index
+        )
+    ) {
+        return;
     }
-  });
 
-  document.getElementById("score").style.display = "block";
 
-  document.getElementById("score").textContent =
-    `🏆 คะแนนของคุณ: ${score} / 10`;
+    selected.push({
 
-  const message = document.getElementById("message");
+        index: index,
 
-  message.style.display = "block";
+        number:
+            selected.length + 1
 
-  if (score === 10) {
+    });
 
-    message.textContent =
-      "🎉 ยอดเยี่ยม! เรียงถูกทั้งหมด";
 
-  } else if (score >= 7) {
+    render();
 
-    message.textContent =
-      "👏 เก่งมาก! ลองดูเหตุผลของแต่ละคำเพิ่มเติม";
+    updateStatus();
 
-  } else {
-
-    message.textContent =
-      "💡 ลองอ่านเหตุผลของแต่ละคำ แล้วเล่นอีกครั้ง";
-  }
-
-  document.getElementById("answerBtn").style.display = "none";
 }
 
-function resetGame() {
-  startGame();
+
+/* =========================================
+   GET REMAINING
+========================================= */
+
+function getRemainingCount() {
+
+    return shuffledWords.length -
+           solved.size;
+
 }
 
-startGame();
+
+/* =========================================
+   CHECK ANSWERS
+========================================= */
+
+function checkAnswers() {
+
+    if (
+        selected.length !==
+        getRemainingCount()
+    ) {
+        return;
+    }
+
+
+    let newCorrect = 0;
+
+
+    selected.forEach(selection => {
+
+        const index =
+            selection.index;
+
+        /*
+            index + 1
+            คืออันดับที่ถูกต้อง
+        */
+
+        const correctRank =
+            index + 1;
+
+
+        if (
+            selection.number ===
+            correctRank
+        ) {
+
+            solved.add(index);
+
+            score++;
+
+            newCorrect++;
+
+        }
+
+    });
+
+
+    /*
+        แสดงผลถูก / ผิด
+    */
+
+    selected.forEach(selection => {
+
+        const card =
+            document.querySelector(
+                `.card[data-index="${selection.index}"]`
+            );
+
+        if (!card) return;
+
+
+        if (
+            solved.has(selection.index)
+        ) {
+
+            card.classList.remove("selected");
+
+            card.classList.add("correct");
+
+            card.innerHTML = `
+
+                <div class="number">✓</div>
+
+                <div class="word">
+                    ${shuffledWords[
+                        selection.index
+                    ].wrong}
+                </div>
+
+                <div class="answer">
+                    ✓ คำที่ถูก:
+                    ${shuffledWords[
+                        selection.index
+                    ].correct}
+                </div>
+
+                <div class="reason">
+                    ${shuffledWords[
+                        selection.index
+                    ].reason}
+                </div>
+
+            `;
+
+        }
+
+        else {
+
+            card.classList.add("wrong");
+
+        }
+
+    });
+
+
+    /*
+        เคลียร์คำตอบที่ผิด
+    */
+
+    setTimeout(() => {
+
+        selected = [];
+
+        render();
+
+        updateStatus();
+        updateScore();
+
+
+        /*
+            จบเกม
+        */
+
+        if (
+            solved.size ===
+            shuffledWords.length
+        ) {
+
+            setTimeout(showComplete, 350);
+
+        }
+
+    }, 750);
+
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+function updateStatus() {
+
+    const status =
+        document.getElementById("status");
+
+
+    if (
+        solved.size ===
+        shuffledWords.length
+    ) {
+
+        status.innerHTML =
+            "🎉 <strong>ตอบถูกครบทั้ง 10 คำแล้ว!</strong>";
+
+        return;
+
+    }
+
+
+    const remaining =
+        getRemainingCount();
+
+
+    if (selected.length === 0) {
+
+        status.innerHTML =
+            `เลือกคำ <strong>1</strong> จากทั้งหมด
+             <strong>${remaining}</strong> คำ`;
+
+        return;
+
+    }
+
+
+    status.innerHTML =
+        `เลือกแล้ว <strong>${selected.length}</strong>
+         จาก <strong>${remaining}</strong> คำ`;
+
+}
+
+
+/* =========================================
+   SCORE
+========================================= */
+
+function updateScore() {
+
+    document
+        .getElementById("score")
+        .textContent = score;
+
+}
+
+
+/* =========================================
+   COMPLETE
+========================================= */
+
+function showComplete() {
+
+    document
+        .getElementById("finalScore")
+        .textContent =
+        `ได้ ${score} / 10 คะแนน`;
+
+    document
+        .getElementById("complete")
+        .classList.add("show");
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+newGame();
 
 </script>
 
