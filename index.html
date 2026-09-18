@@ -110,13 +110,13 @@
     }
 
     /* ผิด - แสดงเพียงชั่วคราว */
-    .card.wrong-flash {
+    .card.incorrect {
       border-color: #d16b6b;
       background: #fff0f0;
-      animation: wrongFlash 0.7s ease;
+      animation: incorrectFlash 0.7s ease;
     }
 
-    @keyframes wrongFlash {
+    @keyframes incorrectFlash {
 
       0% {
         transform: scale(1);
@@ -348,7 +348,6 @@
 
 <script>
 
-
 /* =====================================================
    ข้อมูลคำ
 ===================================================== */
@@ -528,46 +527,29 @@ function createCards() {
 
 function selectCard(card, index) {
 
-  /*
-    คำที่ถูกแล้วเลือกไม่ได้
-  */
-
-  if (solved.has(index)) {
-    return;
-  }
+  // คำที่ถูกแล้วล็อก ห้ามเลือก
+  if (solved.has(index)) return;
 
 
-  /*
-    ถ้าเลือกไปแล้วในรอบนี้
-    ไม่ให้เลือกซ้ำ
-  */
-
-  if (currentSelection.includes(index)) {
-    return;
-  }
+  // ถ้าเลือกคำนี้ไปแล้วในรอบนี้
+  if (currentSelection.includes(index)) return;
 
 
-  /*
-    เมื่อกดคำที่ผิดอีกครั้ง
-    ให้กลับมาเป็นสถานะปกติ
-  */
-
-  card.classList.remove("wrong-flash");
+  // เอาสีแดงออกเมื่อเริ่มตอบใหม่
+  card.classList.remove("incorrect");
 
 
-  /*
-    เพิ่มเข้าอันดับ
-  */
-
+  // เพิ่มคำเข้าไปในรอบปัจจุบัน
   currentSelection.push(index);
-
 
   const number = currentSelection.length;
 
 
+  // กำลังเลือก
   card.classList.add("selected");
 
 
+  // ใส่อันดับ
   card.querySelector(".rank").textContent =
     number;
 
@@ -575,23 +557,16 @@ function selectCard(card, index) {
   updateStatus();
 
 
-  /*
-    จำนวนคำที่เหลือ
-  */
-
+  // จำนวนคำที่ยังเหลือ
   const remaining =
     words.length - solved.size;
 
 
-  /*
-    เลือกครบแล้ว
-  */
-
+  // เลือกครบแล้ว
   if (currentSelection.length === remaining) {
 
     document.getElementById("answerBtn").style.display =
       "inline-block";
-
 
     document.getElementById("status").textContent =
       "เลือกครบแล้ว — กด “เฉลย” ได้เลย 🔍";
@@ -611,6 +586,7 @@ function checkAnswer() {
     words.length - solved.size;
 
 
+  // ต้องเลือกครบก่อน
   if (currentSelection.length !== remaining) {
     return;
   }
@@ -626,17 +602,19 @@ function checkAnswer() {
     );
 
 
+    // อันดับที่ผู้เล่นเลือก
     const selectedRank =
       position + 1;
 
 
+    // อันดับที่ถูกต้อง
     const correctRank =
       index + 1;
 
 
-    /* ================================================
-       ถูก
-    ================================================ */
+    // =========================
+    // ตอบถูก
+    // =========================
 
     if (selectedRank === correctRank) {
 
@@ -645,9 +623,13 @@ function checkAnswer() {
 
       card.classList.remove("selected");
 
-      card.classList.remove("wrong-flash");
+      card.classList.remove("incorrect");
 
+
+      // ถูกแล้วเขียวค้าง
       card.classList.add("correct");
+
+      card.classList.add("locked");
 
 
       card.querySelector(".rank").textContent =
@@ -659,67 +641,68 @@ function checkAnswer() {
     }
 
 
-    /* ================================================
-       ผิด
-    ================================================ */
+    // =========================
+    // ตอบผิด
+    // =========================
 
     else {
 
       card.classList.remove("selected");
 
+      card.classList.add("incorrect");
+
+      // สำคัญ: ไม่ล็อก
+      card.classList.remove("locked");
+
+
+      card.querySelector(".rank").textContent =
+        selectedRank;
+
 
       /*
-        แสดงสีแดงชั่วคราว
-      */
-
-      card.classList.add("wrong-flash");
-
-
-      /*
-        เอาสีแดงออกอัตโนมัติ
-        หลัง 700 มิลลิวินาที
+        สีแดงอยู่เพียง 700ms
+        แล้วกลับเป็นการ์ดปกติ
       */
 
       setTimeout(() => {
 
-        card.classList.remove("wrong-flash");
+        // ถ้ายังไม่ถูก ให้กลับเป็นปกติ
+        if (!solved.has(index)) {
 
-        card.querySelector(".rank").textContent = "";
+          card.classList.remove("incorrect");
 
-      }, 900);
+          card.querySelector(".rank").textContent = "";
+
+        }
+
+      }, 700);
 
     }
 
   });
 
 
-  /*
-    ล้างคำตอบรอบนี้
-  */
-
+  // ล้างคำตอบรอบนี้
   currentSelection = [];
 
 
-  /*
-    ซ่อนปุ่มเฉลยก่อน
-  */
-
+  // ซ่อนปุ่มเฉลย
   document.getElementById("answerBtn").style.display =
     "none";
 
 
-  /* ================================================
-     ถูกครบ
-  ================================================ */
+  // =========================
+  // ถูกครบ 10
+  // =========================
 
   if (solved.size === words.length) {
 
-    document.getElementById("result").textContent =
-      "🏆 ถูกครบ 10 / 10";
-
-
     document.getElementById("status").textContent =
-      "🎉 ตอบถูกครบทุกคำแล้ว";
+      "🎉 ตอบถูกครบทั้ง 10 คำแล้ว!";
+
+
+    document.getElementById("result").textContent =
+      "🏆 10 / 10";
 
 
     document.getElementById("complete").style.display =
@@ -727,32 +710,18 @@ function checkAnswer() {
 
 
     return;
-
   }
 
 
-  /* ================================================
-     ยังมีคำที่ผิด
-  ================================================ */
+  // =========================
+  // ยังมีคำที่ผิด
+  // =========================
 
   document.getElementById("result").textContent =
     `รอบนี้ถูก ${correctThisRound} คำ`;
 
 
-  const remainingAfter =
-    words.length - solved.size;
-
-
-  document.getElementById("status").textContent =
-    `ยังเหลือ ${remainingAfter} คำ — ลองตอบใหม่`;
-
-
-  /*
-    หลังจากเฉลย
-    คำที่ผิดกลับมาให้กดได้
-  */
-
-  prepareNextRound();
+  prepareWrongAnswers();
 
 }
 
@@ -761,7 +730,7 @@ function checkAnswer() {
    เตรียมรอบต่อไป
 ===================================================== */
 
-function prepareNextRound() {
+function prepareWrongAnswers() {
 
   const cards =
     document.querySelectorAll(".card");
@@ -773,32 +742,54 @@ function prepareNextRound() {
       Number(card.dataset.index);
 
 
-    /*
-      คำที่ถูกแล้ว
-      ให้เขียวค้าง
-    */
+    // =========================
+    // คำที่ถูกแล้ว
+    // =========================
 
     if (solved.has(index)) {
 
       card.classList.add("correct");
+
+      card.classList.add("locked");
 
       return;
 
     }
 
 
-    /*
-      คำที่ผิด
-      กลับเป็นการ์ดปกติ
-    */
+    // =========================
+    // คำที่ยังผิด
+    // =========================
 
     card.classList.remove("selected");
 
-    card.classList.remove("wrong-flash");
+    card.classList.remove("locked");
+
+
+    /*
+      ไม่ล็อกการ์ดผิด
+      เพื่อให้ตอบใหม่ได้
+    */
+
+
+    /*
+      ไม่ลบ incorrect ตรงนี้
+      ให้ setTimeout เป็นคนลบ
+      เพื่อให้เห็นสีแดงชั่วคราว
+    */
+
 
     card.querySelector(".rank").textContent = "";
 
   });
+
+
+  const remaining =
+    words.length - solved.size;
+
+
+  document.getElementById("status").textContent =
+    `🔴 คำที่ผิดตอบใหม่ได้ — เหลือ ${remaining} คำ`;
 
 }
 
