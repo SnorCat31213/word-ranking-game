@@ -1,1 +1,1 @@
-# word-ranking-game3
+# word-ranking-game
