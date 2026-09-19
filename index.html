@@ -1,1618 +1,1510 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>เกมเรียงอันดับคำที่ใช้ผิดมากที่สุด</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>เกมเรียงอันดับคำที่ใช้ผิดมากที่สุด</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  font-family: "Kanit", sans-serif;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+body {
+  min-height: 100dvh;
+  color: #fff;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(124,58,237,.28), transparent 30%),
+    radial-gradient(circle at 85% 20%, rgba(59,130,246,.22), transparent 28%),
+    linear-gradient(135deg,#090b18,#11152b 55%,#090b18);
 
-    html,
-    body {
-      margin: 0;
-      width: 100%;
-      min-height: 100%;
-      font-family: "Kanit", sans-serif;
-    }
+  overflow-x: hidden;
+}
 
-    body {
-      min-height: 100dvh;
-      color: #fff;
-      background:
-        radial-gradient(circle at 15% 15%, rgba(124, 58, 237, .28), transparent 30%),
-        radial-gradient(circle at 85% 20%, rgba(59, 130, 246, .22), transparent 28%),
-        linear-gradient(135deg, #090b18, #11152b 55%, #090b18);
+button {
+  font-family: inherit;
+}
 
-      overflow-x: hidden;
-    }
+.app {
+  width: 100%;
+  min-height: 100dvh;
+  padding: clamp(10px,1.5vw,25px);
+}
 
-    button {
-      font-family: inherit;
-    }
+.container {
+  width: min(1800px,100%);
+  margin: auto;
+}
 
-    .app {
-      width: 100%;
-      min-height: 100dvh;
-      padding: clamp(10px, 1.5vw, 25px);
-    }
+/* HEADER */
 
-    .container {
-      width: min(1800px, 100%);
-      margin: auto;
-    }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
 
-    /* =========================
-       HEADER
-    ========================= */
+  padding: clamp(14px,1.5vw,22px);
+  margin-bottom: 12px;
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
+  background: rgba(20,24,48,.72);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
 
-      padding: clamp(14px, 1.5vw, 22px);
-      margin-bottom: 12px;
+  backdrop-filter: blur(18px);
 
-      background: rgba(20, 24, 48, .72);
-      border: 1px solid rgba(255, 255, 255, .10);
-      border-radius: 22px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
 
-      backdrop-filter: blur(18px);
+.brand {
+  min-width: 0;
+}
 
-      box-shadow:
-        0 12px 40px rgba(0, 0, 0, .25);
-    }
+.badge {
+  display: inline-flex;
+  align-items: center;
 
-    .brand {
-      min-width: 0;
-    }
+  padding: 4px 12px;
+  margin-bottom: 5px;
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
+  border-radius: 999px;
 
-      padding: 4px 12px;
-      margin-bottom: 5px;
+  background: rgba(139,92,246,.18);
+  border: 1px solid rgba(167,139,250,.35);
 
-      border-radius: 999px;
+  color: #c4b5fd;
 
-      background: rgba(139, 92, 246, .18);
-      border: 1px solid rgba(167, 139, 250, .35);
+  font-size: clamp(10px,1vw,14px);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
 
-      color: #c4b5fd;
+h1 {
+  margin: 0;
 
-      font-size: clamp(10px, 1vw, 14px);
-      font-weight: 600;
+  font-size: clamp(23px,2.7vw,42px);
+  line-height: 1.15;
+  font-weight: 700;
+}
 
-      letter-spacing: 1px;
-    }
+.subtitle {
+  margin-top: 5px;
+  color: #aab3cc;
+  font-size: clamp(12px,1.15vw,17px);
+}
 
-    h1 {
-      margin: 0;
+/* HUD */
 
-      font-size: clamp(23px, 2.7vw, 42px);
-      line-height: 1.15;
-      font-weight: 700;
-    }
+.hud {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
 
-    .subtitle {
-      margin-top: 5px;
+.stat {
+  min-width: 105px;
 
-      color: #aab3cc;
+  padding: 10px 16px;
 
-      font-size: clamp(12px, 1.15vw, 17px);
-    }
+  text-align: center;
 
-    /* =========================
-       HUD
-    ========================= */
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.09);
 
-    .hud {
-      display: flex;
-      gap: 10px;
+  border-radius: 15px;
+}
 
-      flex-shrink: 0;
-    }
+.stat-label {
+  color: #929bb7;
+  font-size: 12px;
+}
 
-    .stat {
-      min-width: 105px;
+.stat-value {
+  margin-top: 1px;
+  color: #fff;
+  font-size: clamp(20px,2vw,29px);
+  font-weight: 700;
+  line-height: 1;
+}
 
-      padding: 10px 16px;
+/* INSTRUCTION */
 
-      text-align: center;
+.instruction {
+  display: flex;
+  align-items: center;
 
-      background: rgba(255, 255, 255, .055);
-      border: 1px solid rgba(255, 255, 255, .09);
+  margin-bottom: 12px;
+  padding: 9px 16px;
 
-      border-radius: 15px;
-    }
+  border-radius: 14px;
 
-    .stat-label {
-      color: #929bb7;
-      font-size: 12px;
-    }
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.07);
+}
 
-    .stat-value {
-      margin-top: 1px;
+.instruction-text {
+  color: #c9d0e3;
+  font-size: clamp(12px,1.05vw,16px);
+}
 
-      color: #fff;
+.instruction strong {
+  color: #d8ccff;
+}
 
-      font-size: clamp(20px, 2vw, 29px);
-      font-weight: 700;
+/* BOARD */
 
-      line-height: 1;
-    }
+.board {
+  display: grid;
 
-    /* =========================
-       INSTRUCTION
-    ========================= */
+  grid-template-columns:
+    repeat(5,minmax(0,1fr));
 
-    .instruction {
-      display: flex;
-      align-items: center;
+  grid-template-rows:
+    repeat(2,minmax(0,1fr));
 
-      margin-bottom: 12px;
-      padding: 9px 16px;
+  gap: clamp(9px,1vw,17px);
 
-      border-radius: 14px;
+  width: 100%;
+}
 
-      background: rgba(255, 255, 255, .045);
-      border: 1px solid rgba(255, 255, 255, .07);
-    }
+/* CARD */
 
-    .instruction-text {
-      color: #c9d0e3;
+.card {
+  position: relative;
 
-      font-size: clamp(12px, 1.05vw, 16px);
-    }
+  min-width: 0;
+  min-height: 0;
 
-    .instruction strong {
-      color: #d8ccff;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    /* =========================
-       BOARD
-    ========================= */
+  padding:
+    clamp(24px,2vw,34px)
+    clamp(14px,1.5vw,24px);
 
-    .board {
-      display: grid;
+  border-radius: 20px;
 
-      grid-template-columns:
-        repeat(5, minmax(0, 1fr));
+  border: 1px solid rgba(255,255,255,.10);
 
-      grid-template-rows:
-        repeat(2, minmax(0, 1fr));
+  background:
+    linear-gradient(
+      145deg,
+      rgba(34,39,72,.96),
+      rgba(22,26,52,.96)
+    );
 
-      gap: clamp(9px, 1vw, 17px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 12px 28px rgba(0,0,0,.20);
 
-      width: 100%;
-    }
+  cursor: pointer;
+  overflow: hidden;
 
-    /* =========================
-       CARD
-    ========================= */
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background .18s ease;
+}
 
-    .card {
-      position: relative;
+.card:hover:not(.locked) {
+  transform: translateY(-3px);
 
-      min-width: 0;
-      min-height: 0;
+  border-color: rgba(167,139,250,.5);
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  box-shadow:
+    0 15px 35px rgba(0,0,0,.28),
+    0 0 24px rgba(124,58,237,.13);
+}
 
-      padding:
-        clamp(24px, 2vw, 34px)
-        clamp(14px, 1.5vw, 24px);
+.card.selected {
+  transform: translateY(-4px);
 
-      border-radius: 20px;
+  border-color: #a78bfa;
 
-      border: 1px solid rgba(255, 255, 255, .10);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(76,55,135,.95),
+      rgba(37,33,78,.98)
+    );
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(34, 39, 72, .96),
-          rgba(22, 26, 52, .96)
-        );
+  box-shadow:
+    0 15px 35px rgba(0,0,0,.3),
+    0 0 30px rgba(139,92,246,.25);
+}
 
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, .04),
-        0 12px 28px rgba(0, 0, 0, .20);
+.card.locked {
+  cursor: default;
 
-      cursor: pointer;
+  border-color: rgba(34,197,94,.65);
 
-      overflow: hidden;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20,73,54,.96),
+      rgba(17,51,45,.98)
+    );
 
-      transition:
-        transform .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease,
-        background .18s ease;
-    }
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.25),
+    0 0 22px rgba(34,197,94,.13);
+}
 
-    .card:hover:not(.locked) {
-      transform: translateY(-3px);
+/* RANK */
 
-      border-color: rgba(167, 139, 250, .5);
+.number {
+  position: absolute;
 
-      box-shadow:
-        0 15px 35px rgba(0, 0, 0, .28),
-        0 0 24px rgba(124, 58, 237, .13);
-    }
+  top: 10px;
+  left: 10px;
 
-    .card.selected {
-      transform: translateY(-4px);
+  width: clamp(30px,2.5vw,42px);
+  height: clamp(30px,2.5vw,42px);
 
-      border-color: #a78bfa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(76, 55, 135, .95),
-          rgba(37, 33, 78, .98)
-        );
+  border-radius: 50%;
 
-      box-shadow:
-        0 15px 35px rgba(0, 0, 0, .3),
-        0 0 30px rgba(139, 92, 246, .25);
-    }
+  color: #d8ccff;
 
-    .card.locked {
-      cursor: default;
+  background: rgba(124,58,237,.16);
 
-      border-color: rgba(34, 197, 94, .65);
+  border: 1px solid rgba(167,139,250,.45);
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(20, 73, 54, .96),
-          rgba(17, 51, 45, .98)
-        );
+  font-size: clamp(14px,1.25vw,19px);
+  font-weight: 700;
 
-      box-shadow:
-        0 10px 30px rgba(0, 0, 0, .25),
-        0 0 22px rgba(34, 197, 94, .13);
-    }
+  z-index: 3;
+}
 
-    /* =========================
-       RANK CIRCLE
-    ========================= */
+.card.selected .number {
+  color: #fff;
+  background: #7c3aed;
+  border-color: #a78bfa;
 
-    .number {
-      position: absolute;
+  box-shadow:
+    0 0 18px rgba(124,58,237,.45);
+}
 
-      top: 10px;
-      left: 10px;
+.card.locked .number {
+  color: #fff;
+  background: #16a34a;
+  border-color: #4ade80;
 
-      width: clamp(30px, 2.5vw, 42px);
-      height: clamp(30px, 2.5vw, 42px);
+  box-shadow:
+    0 0 16px rgba(34,197,94,.3);
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+/* CONTENT */
 
-      border-radius: 50%;
+.card-content {
+  width: 100%;
+  height: 100%;
 
-      color: #d8ccff;
+  min-width: 0;
+  min-height: 0;
 
-      background: rgba(124, 58, 237, .16);
+  display: flex;
+  flex-direction: column;
 
-      border: 1px solid rgba(167, 139, 250, .45);
+  align-items: center;
+  justify-content: center;
 
-      font-size: clamp(14px, 1.25vw, 19px);
-      font-weight: 700;
+  gap: clamp(6px,.7vw,10px);
 
-      z-index: 3;
+  text-align: center;
+}
 
-      flex-shrink: 0;
-    }
+/* WORD */
 
-    .card.selected .number {
-      color: #fff;
+.word {
+  width: 100%;
+  min-width: 0;
 
-      background: #7c3aed;
-      border-color: #a78bfa;
+  color: #fff;
 
-      box-shadow:
-        0 0 18px rgba(124, 58, 237, .45);
-    }
+  /*
+    คำศัพท์ทุกคำใช้ขนาดเดียวกัน
+  */
+  font-size: clamp(20px,2vw,32px);
 
-    .card.locked .number {
-      color: #fff;
+  line-height: 1.2;
+  font-weight: 700;
 
-      background: #16a34a;
-      border-color: #4ade80;
+  text-align: center;
 
-      box-shadow:
-        0 0 16px rgba(34, 197, 94, .3);
-    }
+  overflow-wrap: anywhere;
+}
 
-    /* =========================
-       CARD CONTENT
-    ========================= */
+/* REASON */
 
-    .card-content {
-      width: 100%;
-      height: 100%;
+.answer {
+  width: 100%;
+  min-width: 0;
 
-      min-width: 0;
-      min-height: 0;
+  display: none;
 
-      display: flex;
-      flex-direction: column;
+  opacity: 0;
 
-      align-items: center;
-      justify-content: center;
+  animation: reasonIn .25s ease forwards;
+}
 
-      gap: clamp(6px, .7vw, 10px);
+.card.locked .answer {
+  display: block;
+}
 
-      text-align: center;
-    }
+.reason {
+  width: 100%;
 
-    /* =========================
-       WORD
-    ========================= */
+  padding-top: 7px;
 
-    .word {
-      width: 100%;
+  color: #b8c7dd;
 
-      min-width: 0;
+  border-top: 1px solid rgba(255,255,255,.12);
 
-      color: #ffffff;
+  font-size: clamp(13px,1.15vw,18px);
 
-      font-size: clamp(20px, 2vw, 32px);
-      line-height: 1.2;
-      font-weight: 700;
+  line-height: 1.4;
 
-      text-align: center;
+  font-weight: 400;
 
-      /*
-        ป้องกันข้อความออกนอกกล่อง
-      */
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
+  text-align: center;
 
-    /* =========================
-       REASON
-    ========================= */
+  overflow-wrap: anywhere;
+}
 
-    .answer {
-      width: 100%;
-      min-width: 0;
+@keyframes reasonIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
 
-      display: none;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-      opacity: 0;
+/* WRONG */
 
-      animation: reasonIn .25s ease forwards;
-    }
+.card.wrong {
+  animation: wrongShake .35s ease;
 
-    .card.locked .answer {
-      display: block;
-    }
+  border-color: #ef4444;
 
-    .reason {
-      width: 100%;
+  box-shadow:
+    0 0 24px rgba(239,68,68,.22);
+}
 
-      padding-top: 7px;
+@keyframes wrongShake {
+  0%,100% {
+    transform: translateX(0);
+  }
 
-      color: #b8c7dd;
+  20% {
+    transform: translateX(-7px);
+  }
 
-      border-top: 1px solid rgba(255, 255, 255, .12);
+  40% {
+    transform: translateX(7px);
+  }
 
-      font-size: clamp(13px, 1.15vw, 18px);
-      line-height: 1.4;
+  60% {
+    transform: translateX(-5px);
+  }
 
-      font-weight: 400;
+  80% {
+    transform: translateX(5px);
+  }
+}
 
-      text-align: center;
+/* CONTROLS */
 
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
+.controls {
+  display: flex;
 
-    @keyframes reasonIn {
-      from {
-        opacity: 0;
-        transform: translateY(5px);
-      }
+  align-items: center;
+  justify-content: center;
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+  gap: 10px;
 
-    /* =========================
-       WRONG
-    ========================= */
+  margin-top: 10px;
+}
 
-    .card.wrong {
-      animation: wrongShake .35s ease;
+.btn {
+  border: 0;
+  border-radius: 13px;
 
-      border-color: #ef4444;
+  padding: 9px 20px;
 
-      box-shadow:
-        0 0 24px rgba(239, 68, 68, .22);
-    }
+  color: #fff;
 
-    @keyframes wrongShake {
+  font-size: clamp(13px,1.1vw,16px);
+  font-weight: 600;
 
-      0%,
-      100% {
-        transform: translateX(0);
-      }
+  cursor: pointer;
 
-      20% {
-        transform: translateX(-7px);
-      }
+  transition:
+    transform .15s ease,
+    opacity .15s ease,
+    box-shadow .15s ease;
+}
 
-      40% {
-        transform: translateX(7px);
-      }
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
 
-      60% {
-        transform: translateX(-5px);
-      }
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
 
-      80% {
-        transform: translateX(5px);
-      }
-    }
+.btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
 
-    /* =========================
-       CONTROLS
-    ========================= */
+.btn-clear {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.1);
+}
 
-    .controls {
-      display: flex;
+.btn-check {
+  background:
+    linear-gradient(
+      135deg,
+      #7c3aed,
+      #6366f1
+    );
 
-      align-items: center;
-      justify-content: center;
+  box-shadow:
+    0 8px 20px rgba(99,102,241,.22);
+}
 
-      gap: 10px;
+.btn-new {
+  background:
+    linear-gradient(
+      135deg,
+      #0ea5e9,
+      #6366f1
+    );
+}
 
-      margin-top: 10px;
-    }
+/* PROGRESS */
 
-    .btn {
-      border: 0;
-      border-radius: 13px;
+.progress-wrap {
+  width: min(600px,100%);
+  margin: 8px auto 0;
+}
 
-      padding: 9px 20px;
+.progress-info {
+  display: flex;
+  justify-content: space-between;
 
-      color: #fff;
+  margin-bottom: 4px;
 
-      font-size: clamp(13px, 1.1vw, 16px);
-      font-weight: 600;
+  color: #858fab;
+  font-size: 12px;
+}
 
-      cursor: pointer;
+.progress {
+  width: 100%;
+  height: 6px;
 
-      transition:
-        transform .15s ease,
-        opacity .15s ease,
-        box-shadow .15s ease;
-    }
+  overflow: hidden;
 
-    .btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
+  border-radius: 999px;
 
-    .btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
+  background: rgba(255,255,255,.08);
+}
 
-    .btn:disabled {
-      opacity: .35;
-      cursor: not-allowed;
-    }
+.progress-bar {
+  width: 0%;
+  height: 100%;
 
-    .btn-clear {
-      background: rgba(255, 255, 255, .08);
+  border-radius: inherit;
 
-      border: 1px solid rgba(255, 255, 255, .1);
-    }
+  background:
+    linear-gradient(
+      90deg,
+      #7c3aed,
+      #6366f1,
+      #22c55e
+    );
 
-    .btn-check {
-      background:
-        linear-gradient(
-          135deg,
-          #7c3aed,
-          #6366f1
-        );
+  transition: width .3s ease;
+}
 
-      box-shadow:
-        0 8px 20px rgba(99, 102, 241, .22);
-    }
+/* MODAL */
 
-    .btn-new {
-      background:
-        linear-gradient(
-          135deg,
-          #0ea5e9,
-          #6366f1
-        );
-    }
+.overlay {
+  position: fixed;
+  inset: 0;
 
-    /* =========================
-       PROGRESS
-    ========================= */
+  display: none;
 
-    .progress-wrap {
-      width: min(600px, 100%);
+  align-items: center;
+  justify-content: center;
 
-      margin: 8px auto 0;
-    }
+  padding: 20px;
 
-    .progress-info {
-      display: flex;
-      justify-content: space-between;
+  background: rgba(3,5,15,.76);
 
-      margin-bottom: 4px;
+  backdrop-filter: blur(10px);
 
-      color: #858fab;
+  z-index: 100;
+}
 
-      font-size: 12px;
-    }
+.overlay.show {
+  display: flex;
+}
 
-    .progress {
-      width: 100%;
-      height: 6px;
+.modal {
+  width: min(520px,100%);
 
-      overflow: hidden;
+  padding: 35px 28px;
 
-      border-radius: 999px;
+  text-align: center;
 
-      background: rgba(255, 255, 255, .08);
-    }
+  border-radius: 25px;
 
-    .progress-bar {
-      width: 0%;
-      height: 100%;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(32,38,75,.98),
+      rgba(17,21,46,.98)
+    );
 
-      border-radius: inherit;
+  border: 1px solid rgba(167,139,250,.35);
 
-      background:
-        linear-gradient(
-          90deg,
-          #7c3aed,
-          #6366f1,
-          #22c55e
-        );
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.5),
+    0 0 50px rgba(124,58,237,.15);
+}
 
-      transition: width .3s ease;
-    }
+.modal-icon {
+  font-size: 54px;
+  margin-bottom: 8px;
+}
 
-    /* =========================
-       MODAL
-    ========================= */
+.modal h2 {
+  margin: 0;
+  font-size: clamp(25px,3vw,36px);
+}
 
-    .overlay {
-      position: fixed;
+.modal p {
+  margin: 8px 0 22px;
 
-      inset: 0;
+  color: #aab3cc;
 
-      display: none;
+  font-size: 16px;
+}
 
-      align-items: center;
-      justify-content: center;
+.final-score {
+  margin-bottom: 22px;
 
-      padding: 20px;
+  font-size: 24px;
+  font-weight: 700;
+}
 
-      background: rgba(3, 5, 15, .76);
+/* LANDSCAPE TABLET */
 
-      backdrop-filter: blur(10px);
+@media (max-width:1100px) and (orientation:landscape) {
 
-      z-index: 100;
-    }
+  .app {
+    padding: 8px;
+  }
 
-    .overlay.show {
-      display: flex;
-    }
+  .header {
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    border-radius: 15px;
+  }
 
-    .modal {
-      width: min(520px, 100%);
+  .instruction {
+    margin-bottom: 7px;
+    padding: 6px 11px;
+  }
 
-      padding: 35px 28px;
+  .board {
+    gap: 7px;
+  }
 
-      text-align: center;
+  .card {
+    border-radius: 14px;
 
-      border-radius: 25px;
+    padding:
+      23px
+      10px
+      10px;
+  }
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(32, 38, 75, .98),
-          rgba(17, 21, 46, .98)
-        );
+  .word {
+    font-size: clamp(18px,2.35vw,27px);
+  }
 
-      border: 1px solid rgba(167, 139, 250, .35);
+  .reason {
+    font-size: clamp(12px,1.45vw,16px);
+    line-height: 1.32;
+  }
 
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, .5),
-        0 0 50px rgba(124, 58, 237, .15);
-    }
+  .controls {
+    margin-top: 6px;
+  }
 
-    .modal-icon {
-      font-size: 54px;
-      margin-bottom: 8px;
-    }
+  .progress-wrap {
+    margin-top: 4px;
+  }
+}
 
-    .modal h2 {
-      margin: 0;
+/* PORTRAIT */
 
-      font-size: clamp(25px, 3vw, 36px);
-    }
+@media (orientation:portrait) {
 
-    .modal p {
-      margin: 8px 0 22px;
+  body {
+    overflow-y: auto;
+  }
 
-      color: #aab3cc;
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-      font-size: 16px;
-    }
+  .hud {
+    width: 100%;
+  }
 
-    .final-score {
-      margin-bottom: 22px;
+  .stat {
+    flex: 1;
+  }
 
-      font-size: 24px;
-      font-weight: 700;
-    }
+  .board {
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
 
-    /* =========================
-       LANDSCAPE TABLET
-    ========================= */
+    grid-template-rows: none;
+  }
 
-    @media (max-width: 1100px) and (orientation: landscape) {
+  .card {
+    min-height: 180px;
+  }
+}
 
-      .app {
-        padding: 8px;
-      }
+/* PHONE */
 
-      .header {
-        padding: 10px 12px;
-        margin-bottom: 7px;
-        border-radius: 15px;
-      }
+@media (max-width:600px) {
 
-      .instruction {
-        margin-bottom: 7px;
-        padding: 6px 11px;
-      }
+  .app {
+    padding: 8px;
+  }
 
-      .board {
-        gap: 7px;
+  .header {
+    padding: 11px;
+    border-radius: 15px;
+  }
 
-        grid-template-rows:
-          repeat(2, minmax(0, 1fr));
-      }
+  .instruction {
+    padding: 8px 10px;
+  }
 
-      .card {
-        border-radius: 14px;
+  .board {
+    gap: 8px;
+  }
 
-        padding:
-          23px
-          10px
-          10px;
-      }
+  .card {
+    min-height: 165px;
 
-      .word {
-        font-size: clamp(18px, 2.35vw, 27px);
-      }
+    padding:
+      24px
+      9px
+      10px;
 
-      .reason {
-        font-size: clamp(12px, 1.45vw, 16px);
-        line-height: 1.32;
-      }
+    border-radius: 14px;
+  }
 
-      .controls {
-        margin-top: 6px;
-      }
+  .number {
+    top: 7px;
+    left: 7px;
+  }
 
-      .progress-wrap {
-        margin-top: 4px;
-      }
-    }
+  .word {
+    font-size: 21px;
+  }
 
-    /* =========================
-       PORTRAIT
-    ========================= */
+  .reason {
+    font-size: 14px;
+    line-height: 1.35;
+  }
 
-    @media (orientation: portrait) {
+  .controls {
+    flex-wrap: wrap;
+  }
 
-      body {
-        overflow-y: auto;
-      }
+  .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+}
 
-      .header {
-        flex-direction: column;
-        align-items: stretch;
-      }
+@media (max-width:330px) {
 
-      .hud {
-        width: 100%;
-      }
+  .board {
+    grid-template-columns: 1fr;
+  }
 
-      .stat {
-        flex: 1;
-      }
+  .card {
+    min-height: 150px;
+  }
+}
 
-      .board {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
+/* LANDSCAPE FULL SCREEN */
 
-        grid-template-rows: none;
-      }
+@media (orientation:landscape) {
 
-      .card {
-        min-height: 180px;
-      }
-    }
+  body {
+    overflow: hidden;
+  }
 
-    /* =========================
-       PHONE
-    ========================= */
+  .app {
+    height: 100dvh;
+    overflow: hidden;
+  }
 
-    @media (max-width: 600px) {
+  .container {
+    height: 100%;
 
-      .app {
-        padding: 8px;
-      }
+    display: flex;
+    flex-direction: column;
+  }
 
-      .header {
-        padding: 11px;
+  .board {
+    flex: 1;
+    min-height: 0;
+  }
 
-        border-radius: 15px;
-      }
-
-      .instruction {
-        padding: 8px 10px;
-      }
-
-      .board {
-        gap: 8px;
-      }
-
-      .card {
-        min-height: 165px;
-
-        padding:
-          24px
-          9px
-          10px;
-
-        border-radius: 14px;
-      }
-
-      .number {
-        top: 7px;
-        left: 7px;
-      }
-
-      .word {
-        font-size: 21px;
-      }
-
-      .reason {
-        font-size: 14px;
-        line-height: 1.35;
-      }
-
-      .controls {
-        flex-wrap: wrap;
-      }
-
-      .btn {
-        flex: 1;
-        min-width: 120px;
-      }
-    }
-
-    @media (max-width: 330px) {
-
-      .board {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        min-height: 150px;
-      }
-    }
-
-    /* =========================
-       LANDSCAPE FULL SCREEN
-    ========================= */
-
-    @media (orientation: landscape) {
-
-      body {
-        overflow: hidden;
-      }
-
-      .app {
-        height: 100dvh;
-
-        overflow: hidden;
-      }
-
-      .container {
-        height: 100%;
-
-        display: flex;
-        flex-direction: column;
-      }
-
-      .board {
-        flex: 1;
-
-        min-height: 0;
-      }
-
-      .card {
-        min-height: 0;
-      }
-    }
-  </style>
+  .card {
+    min-height: 0;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <main class="app">
+<main class="app">
 
-    <div class="container">
+<div class="container">
 
-      <!-- HEADER -->
+<header class="header">
 
-      <header class="header">
+<div class="brand">
 
-        <div class="brand">
+<div class="badge">
+THAI WORD CHALLENGE
+</div>
 
-          <div class="badge">
-            THAI WORD CHALLENGE
-          </div>
+<h1>
+เกมเรียงอันดับคำที่ใช้ผิดมากที่สุด
+</h1>
 
-          <h1>
-            เกมเรียงอันดับคำที่ใช้ผิดมากที่สุด
-          </h1>
+<div class="subtitle">
+เลือกคำที่คิดว่าสะกดถูก แล้วเรียงอันดับให้ครบทั้ง 10 คำ
+</div>
 
-          <div class="subtitle">
-            เลือกคำที่คิดว่าสะกดถูก แล้วเรียงอันดับให้ครบทั้ง 10 คำ
-          </div>
+</div>
 
-        </div>
+<div class="hud">
 
-        <div class="hud">
+<div class="stat">
 
-          <div class="stat">
+<div class="stat-label">
+คะแนนของคุณ
+</div>
 
-            <div class="stat-label">
-              คะแนนของคุณ
-            </div>
+<div class="stat-value" id="score">
+0
+</div>
 
-            <div
-              class="stat-value"
-              id="score"
-            >
-              0
-            </div>
+</div>
 
-          </div>
+<div class="stat">
 
-          <div class="stat">
+<div class="stat-label">
+ตอบถูกแล้ว
+</div>
 
-            <div class="stat-label">
-              ตอบถูกแล้ว
-            </div>
+<div class="stat-value">
+<span id="solvedCount">0</span>/10
+</div>
 
-            <div class="stat-value">
-              <span id="solvedCount">0</span>/10
-            </div>
+</div>
 
-          </div>
+</div>
 
-        </div>
+</header>
 
-      </header>
+<div class="instruction">
 
+<div class="instruction-text">
 
-      <!-- INSTRUCTION -->
+วิธีเล่น:
+<strong>แตะคำเพื่อเลือกอันดับ</strong>
+•
+แตะซ้ำเพื่อยกเลิก
+•
+เลือกครบแล้วกด
+<strong>ตรวจคำตอบ</strong>
 
-      <div class="instruction">
+</div>
 
-        <div class="instruction-text">
+</div>
 
-          วิธีเล่น:
-          <strong>แตะคำเพื่อเลือกอันดับ</strong>
-          • แตะซ้ำเพื่อยกเลิก
-          • เลือกครบแล้วกด
-          <strong>ตรวจคำตอบ</strong>
+<section class="board" id="board"></section>
 
-        </div>
+<div class="controls">
 
-      </div>
+<button
+class="btn btn-clear"
+id="clearBtn"
+onclick="clearSelected()">
+↺ ล้างคำตอบ
+</button>
 
+<button
+class="btn btn-check"
+id="checkBtn"
+onclick="checkAnswers()"
+disabled>
+✓ ตรวจคำตอบ
+</button>
 
-      <!-- BOARD -->
+<button
+class="btn btn-new"
+onclick="newGame()">
+⟳ เริ่มเกมใหม่
+</button>
 
-      <section
-        class="board"
-        id="board"
-      ></section>
+</div>
 
+<div class="progress-wrap">
 
-      <!-- CONTROLS -->
+<div class="progress-info">
 
-      <div class="controls">
+<span>ความคืบหน้า</span>
 
-        <button
-          class="btn btn-clear"
-          id="clearBtn"
-          onclick="clearSelected()"
-        >
-          ↺ ล้างคำตอบ
-        </button>
+<span id="progressText">
+0 / 10
+</span>
 
-        <button
-          class="btn btn-check"
-          id="checkBtn"
-          onclick="checkAnswers()"
-          disabled
-        >
-          ✓ ตรวจคำตอบ
-        </button>
+</div>
 
-        <button
-          class="btn btn-new"
-          onclick="newGame()"
-        >
-          ⟳ เริ่มเกมใหม่
-        </button>
+<div class="progress">
 
-      </div>
+<div
+class="progress-bar"
+id="progressBar">
+</div>
 
+</div>
 
-      <!-- PROGRESS -->
+</div>
 
-      <div class="progress-wrap">
+</div>
 
-        <div class="progress-info">
+</main>
+
+<div
+class="overlay"
+id="overlay">
+
+<div class="modal">
+
+<div class="modal-icon">
+🏆
+</div>
+
+<h2>
+ยินดีด้วย!
+</h2>
+
+<p>
+คุณเรียงอันดับคำได้ครบทั้ง 10 คำแล้ว
+</p>
 
-          <span>
-            ความคืบหน้า
-          </span>
+<div class="final-score">
+
+คะแนน:
+<span id="finalScore">0</span>
+/ 10
+
+</div>
+
+<button
+class="btn btn-new"
+onclick="newGame()">
+⟳ เล่นใหม่
+</button>
+
+</div>
 
-          <span id="progressText">
-            0 / 10
-          </span>
+</div>
 
-        </div>
+<script>
 
-        <div class="progress">
+/* =========================================
+   คำศัพท์ที่ถูกต้อง
+========================================= */
 
-          <div
-            class="progress-bar"
-            id="progressBar"
-          ></div>
+const WORDS = [
 
-        </div>
+{
+word: "สเต๊ก",
+rank: 1,
+reason:
+"พบเห็นบ่อยในเมนูอาหาร ป้ายร้าน และโฆษณา ทำให้ผู้คนคุ้นเคยกับคำนี้และมีโอกาสพบรูปสะกดที่หลากหลายสูง"
+},
 
-      </div>
+{
+word: "เฟซบุ๊ก",
+rank: 2,
+reason:
+"เป็นคำที่ใช้ในชีวิตประจำวันและสื่อออนไลน์อย่างแพร่หลาย จึงมีโอกาสพบการสะกดคลาดเคลื่อนจำนวนมาก"
+},
+
+{
+word: "คอมเมนต์",
+rank: 3,
+reason:
+"ใช้บ่อยในโซเชียลมีเดีย โดยเฉพาะช่องแสดงความคิดเห็น ทำให้พบรูปสะกดที่คลาดเคลื่อนได้เป็นจำนวนมาก"
+},
 
-    </div>
+{
+word: "ลิงก์",
+rank: 4,
+reason:
+"ใช้เป็นประจำในเว็บไซต์ เอกสาร และการสื่อสารออนไลน์ แต่มีบริบทการใช้งานแคบกว่าคำในอันดับต้น ๆ"
+},
 
-  </main>
+{
+word: "บูท",
+rank: 5,
+reason:
+"มักใช้ในงานแสดงสินค้า นิทรรศการ และกิจกรรมต่าง ๆ จึงพบมากในบางบริบท แต่ไม่ครอบคลุมการใช้ภาษาในชีวิตประจำวันทั้งหมด"
+},
 
+{
+word: "เวิร์กชอป",
+rank: 6,
+reason:
+"พบในงานอบรม สัมมนา และกิจกรรมการเรียนรู้เป็นหลัก จึงมีการใช้งานเฉพาะบริบทมากกว่าคำอันดับก่อนหน้า"
+},
 
-  <!-- COMPLETION -->
+{
+word: "แมป",
+rank: 7,
+reason:
+"พบมากในบริบทเกม เทคโนโลยี และการใช้งานออนไลน์บางกลุ่ม จึงมีการใช้จำกัดอยู่ในกลุ่มผู้ใช้เฉพาะทางมากกว่า"
+},
 
-  <div
-    class="overlay"
-    id="overlay"
-  >
+{
+word: "สถาปัตย์",
+rank: 8,
+reason:
+"เป็นคำที่เกี่ยวข้องกับวงการสถาปัตยกรรมและกลุ่มนักศึกษาเป็นหลัก จึงพบในภาษาทั่วไปน้อยกว่าคำที่อยู่ในอันดับต้น ๆ"
+},
 
-    <div class="modal">
+{
+word: "อยู่ดีกินดี",
+rank: 9,
+reason:
+"เป็นคำที่มีความหมายเกี่ยวกับการมีชีวิตความเป็นอยู่ที่ดี ใช้ในภาษาไทยทั่วไป"
+},
 
-      <div class="modal-icon">
-        🏆
-      </div>
+{
+word: "นมสด",
+rank: 10,
+reason:
+"เป็นคำเรียกเครื่องดื่มหรือนมที่ยังคงลักษณะเป็นนมสด ใช้เป็นคำศัพท์ทั่วไปในภาษาไทย"
+}
 
-      <h2>
-        ยินดีด้วย!
-      </h2>
+];
 
-      <p>
-        คุณเรียงอันดับคำได้ครบทั้ง 10 คำแล้ว
-      </p>
-
-      <div class="final-score">
 
-        คะแนน:
-        <span id="finalScore">0</span>
-        / 10
-
-      </div>
-
-      <button
-        class="btn btn-new"
-        onclick="newGame()"
-      >
-        ⟳ เล่นใหม่
-      </button>
-
-    </div>
+/* =========================================
+   STATE
+========================================= */
 
-  </div>
+let cards = [];
+let selected = [];
+let solved = new Set();
+let wrongCards = new Set();
+let score = 0;
 
 
-  <script>
+/* =========================================
+   SHUFFLE
+========================================= */
 
-    /* =========================================
-       DATA
-    ========================================= */
+function shuffle(array) {
 
-    const WORDS = [
+const arr = [...array];
 
-      {
-        common: "สเต็ก",
-        correct: "สเต๊ก",
-        rank: 1,
-        reason:
-          "พบเห็นบ่อยในเมนูอาหาร ป้ายร้าน และโฆษณา ทำให้ผู้คนคุ้นเคยกับคำนี้และมีโอกาสพบรูปสะกดที่หลากหลายสูง"
-      },
+for (
+let i = arr.length - 1;
+i > 0;
+i--
+) {
 
-      {
-        common: "เฟสบุ๊ค",
-        correct: "เฟซบุ๊ก",
-        rank: 2,
-        reason:
-          "เป็นคำที่ใช้ในชีวิตประจำวันและสื่อออนไลน์อย่างแพร่หลาย จึงมีโอกาสพบการสะกดคลาดเคลื่อนจำนวนมาก"
-      },
+const j =
+Math.floor(
+Math.random() * (i + 1)
+);
 
-      {
-        common: "คอมเม้นต์",
-        correct: "คอมเมนต์",
-        rank: 3,
-        reason:
-          "ใช้บ่อยในโซเชียลมีเดีย โดยเฉพาะช่องแสดงความคิดเห็น ทำให้พบรูปสะกดที่คลาดเคลื่อนได้เป็นจำนวนมาก"
-      },
+[
+arr[i],
+arr[j]
+] =
+[
+arr[j],
+arr[i]
+];
 
-      {
-        common: "ลิงค์",
-        correct: "ลิงก์",
-        rank: 4,
-        reason:
-          "ใช้เป็นประจำในเว็บไซต์ เอกสาร และการสื่อสารออนไลน์ แต่มีบริบทการใช้งานแคบกว่าคำในอันดับต้น ๆ"
-      },
+}
 
-      {
-        common: "บูธ",
-        correct: "บูท",
-        rank: 5,
-        reason:
-          "มักใช้ในงานแสดงสินค้า นิทรรศการ และกิจกรรมต่าง ๆ จึงพบมากในบางบริบท แต่ไม่ครอบคลุมการใช้ภาษาในชีวิตประจำวันทั้งหมด"
-      },
+return arr;
 
-      {
-        common: "เวิร์กช็อป",
-        correct: "เวิร์กชอป",
-        rank: 6,
-        reason:
-          "พบในงานอบรม สัมมนา และกิจกรรมการเรียนรู้เป็นหลัก จึงมีการใช้งานเฉพาะบริบทมากกว่าคำอันดับก่อนหน้า"
-      },
+}
 
-      {
-        common: "แมพ",
-        correct: "แมป",
-        rank: 7,
-        reason:
-          "พบมากในบริบทเกม เทคโนโลยี และการใช้งานออนไลน์บางกลุ่ม จึงมีการใช้จำกัดอยู่ในกลุ่มผู้ใช้เฉพาะทางมากกว่า"
-      },
 
-      {
-        common: "ถาปัตย์",
-        correct: "สถาปัตย์",
-        rank: 8,
-        reason:
-          "เป็นคำที่เกี่ยวข้องกับวงการสถาปัตยกรรมและกลุ่มนักศึกษาเป็นหลัก จึงพบในภาษาทั่วไปน้อยกว่าคำที่อยู่ในอันดับต้น ๆ"
-      },
+/* =========================================
+   NEXT AVAILABLE RANK
+========================================= */
 
-      {
-        common: "อยู่ดี กรีนดี",
-        correct: "อยู่ดีกินดี",
-        rank: 9,
-        reason:
-          "เป็นการเล่นคำที่เกิดขึ้นเฉพาะในบางแคมเปญหรือกิจกรรม จึงไม่ได้มีการใช้แพร่หลายในชีวิตประจำวันเหมือนคำอื่น"
-      },
+function getNextAvailableRank() {
 
-      {
-        common: "นมโสด",
-        correct: "นมสด",
-        rank: 10,
-        reason:
-          "เป็นคำที่ถูกนำไปดัดแปลงเป็นคำเล่นในบางร้านหรือแคมเปญการตลาด จึงพบเฉพาะกรณีและไม่ใช่การสะกดผิดที่เกิดขึ้นทั่วไป"
-      }
+for (
+let rank = 1;
+rank <= WORDS.length;
+rank++
+) {
 
-    ];
+const alreadySolved =
+[...solved].some(
+index =>
+cards[index].rank === rank
+);
 
+const alreadySelected =
+selected.some(
+item =>
+item.number === rank
+);
 
-    /* =========================================
-       STATE
-    ========================================= */
+if (
+!alreadySolved &&
+!alreadySelected
+) {
 
-    let cards = [];
+return rank;
 
-    let selected = [];
+}
 
-    let solved = new Set();
+}
 
-    let wrongCards = new Set();
+return null;
 
-    let score = 0;
+}
 
 
-    /* =========================================
-       SHUFFLE
-    ========================================= */
+/* =========================================
+   RENDER
+========================================= */
 
-    function shuffle(array) {
+function render() {
 
-      const arr = [...array];
+const board =
+document.getElementById("board");
 
-      for (
-        let i = arr.length - 1;
-        i > 0;
-        i--
-      ) {
+board.innerHTML = "";
 
-        const j =
-          Math.floor(
-            Math.random() * (i + 1)
-          );
 
-        [
-          arr[i],
-          arr[j]
-        ] = [
-          arr[j],
-          arr[i]
-        ];
+cards.forEach(
+(item,index) => {
 
-      }
+const card =
+document.createElement("div");
 
-      return arr;
-    }
+card.className = "card";
 
 
-    /* =========================================
-       NEXT AVAILABLE RANK
-    ========================================= */
+const isSolved =
+solved.has(index);
 
-    function getNextAvailableRank() {
 
-      for (
-        let rank = 1;
-        rank <= WORDS.length;
-        rank++
-      ) {
+if (isSolved) {
+card.classList.add("locked");
+}
 
-        const alreadySolved =
-          [...solved].some(
-            index =>
-              cards[index].rank === rank
-          );
 
-        const alreadySelected =
-          selected.some(
-            item =>
-              item.number === rank
-          );
+if (wrongCards.has(index)) {
+card.classList.add("wrong");
+}
 
-        if (
-          !alreadySolved &&
-          !alreadySelected
-        ) {
 
-          return rank;
-        }
+/* วงกลมอันดับ */
 
-      }
+const number =
+document.createElement("div");
 
-      return null;
-    }
+number.className = "number";
 
 
-    /* =========================================
-       RENDER
-    ========================================= */
+const selectedItem =
+selected.find(
+item =>
+item.index === index
+);
 
-    function render() {
 
-      const board =
-        document.getElementById("board");
+if (selectedItem) {
 
-      board.innerHTML = "";
+number.textContent =
+selectedItem.number;
 
+} else if (isSolved) {
 
-      cards.forEach(
-        (item, index) => {
+number.textContent =
+item.rank;
 
-          const card =
-            document.createElement("div");
+} else {
 
-          card.className = "card";
+number.textContent =
+"○";
 
+}
 
-          const isSolved =
-            solved.has(index);
 
+/* CONTENT */
 
-          if (isSolved) {
-            card.classList.add("locked");
-          }
+const content =
+document.createElement("div");
 
+content.className =
+"card-content";
 
-          if (wrongCards.has(index)) {
-            card.classList.add("wrong");
-          }
 
+/* คำศัพท์ */
 
-          /* วงกลม + เลขอันดับ */
+const word =
+document.createElement("div");
 
-          const number =
-            document.createElement("div");
+word.className =
+"word";
 
-          number.className = "number";
+word.textContent =
+item.word;
 
 
-          const selectedItem =
-            selected.find(
-              item =>
-                item.index === index
-            );
+/* เหตุผล */
 
+const answer =
+document.createElement("div");
 
-          if (selectedItem) {
+answer.className =
+"answer";
 
-            number.textContent =
-              selectedItem.number;
+answer.innerHTML = `
+<div class="reason">
+${item.reason}
+</div>
+`;
 
-          } else if (isSolved) {
 
-            number.textContent =
-              item.rank;
+content.appendChild(word);
+content.appendChild(answer);
 
-          } else {
+card.appendChild(number);
+card.appendChild(content);
 
-            number.textContent =
-              "○";
 
-          }
+if (!isSolved) {
 
+card.addEventListener(
+"click",
+() =>
+selectCard(index)
+);
 
-          /* CARD CONTENT */
+}
 
-          const content =
-            document.createElement("div");
 
-          content.className =
-            "card-content";
+board.appendChild(card);
 
+}
+);
 
-          /* คำศัพท์ */
 
-          const word =
-            document.createElement("div");
+updateUI();
 
-          word.className = "word";
+}
 
-          word.textContent =
-            isSolved
-              ? item.correct
-              : item.common;
 
+/* =========================================
+   SELECT CARD
+========================================= */
 
-          /* เหตุผล */
+function selectCard(index) {
 
-          const answer =
-            document.createElement("div");
+if (solved.has(index)) {
+return;
+}
 
-          answer.className = "answer";
 
-          answer.innerHTML = `
-            <div class="reason">
-              ${item.reason}
-            </div>
-          `;
+const existing =
+selected.find(
+item =>
+item.index === index
+);
 
 
-          content.appendChild(word);
+/* แตะซ้ำ = ยกเลิก */
 
-          content.appendChild(answer);
+if (existing) {
 
+selected =
+selected.filter(
+item =>
+item.index !== index
+);
 
-          card.appendChild(number);
+wrongCards.delete(index);
 
-          card.appendChild(content);
+render();
 
+return;
 
-          if (!isSolved) {
+}
 
-            card.addEventListener(
-              "click",
-              () => selectCard(index)
-            );
 
-          }
+const nextRank =
+getNextAvailableRank();
 
 
-          board.appendChild(card);
+if (nextRank === null) {
+return;
+}
 
-        }
-      );
 
+selected.push({
+index: index,
+number: nextRank
+});
 
-      updateUI();
-    }
 
+wrongCards.delete(index);
 
-    /* =========================================
-       SELECT CARD
-    ========================================= */
+render();
 
-    function selectCard(index) {
+}
 
-      if (solved.has(index)) {
-        return;
-      }
 
+/* =========================================
+   CHECK
+========================================= */
 
-      const existing =
-        selected.find(
-          item =>
-            item.index === index
-        );
+function checkAnswers() {
 
+const unsolvedCount =
+cards.length - solved.size;
 
-      /* แตะซ้ำ = ยกเลิก */
 
-      if (existing) {
+if (
+selected.length !==
+unsolvedCount
+) {
 
-        selected =
-          selected.filter(
-            item =>
-              item.index !== index
-          );
+return;
 
-        wrongCards.delete(index);
+}
 
-        render();
 
-        return;
-      }
+selected.forEach(
+selection => {
 
+const item =
+cards[selection.index];
 
-      const nextRank =
-        getNextAvailableRank();
 
+if (
+selection.number ===
+item.rank
+) {
 
-      if (nextRank === null) {
-        return;
-      }
+solved.add(
+selection.index
+);
 
+score++;
 
-      selected.push({
-        index: index,
-        number: nextRank
-      });
+} else {
 
+wrongCards.add(
+selection.index
+);
 
-      wrongCards.delete(index);
+}
 
+}
+);
 
-      render();
-    }
 
+selected = [];
 
-    /* =========================================
-       CHECK ANSWERS
-    ========================================= */
+render();
 
-    function checkAnswers() {
 
-      const unsolvedCount =
-        cards.length - solved.size;
+if (
+solved.size ===
+WORDS.length
+) {
 
+setTimeout(
+() => {
 
-      if (
-        selected.length !==
-        unsolvedCount
-      ) {
+document.getElementById(
+"finalScore"
+).textContent =
+score;
 
-        return;
-      }
+document.getElementById(
+"overlay"
+).classList.add("show");
 
+},
+450
+);
 
-      selected.forEach(
-        selection => {
+}
 
-          const item =
-            cards[selection.index];
+}
 
 
-          if (
-            selection.number ===
-            item.rank
-          ) {
+/* =========================================
+   CLEAR
+========================================= */
 
-            solved.add(
-              selection.index
-            );
+function clearSelected() {
 
-            score++;
+selected = [];
 
-          } else {
+wrongCards.clear();
 
-            wrongCards.add(
-              selection.index
-            );
+render();
 
-          }
+}
 
-        }
-      );
 
+/* =========================================
+   NEW GAME
+========================================= */
 
-      selected = [];
+function newGame() {
 
+document.getElementById(
+"overlay"
+).classList.remove("show");
 
-      render();
+cards =
+shuffle(WORDS);
 
+selected = [];
 
-      /* GAME COMPLETE */
+solved =
+new Set();
 
-      if (
-        solved.size ===
-        WORDS.length
-      ) {
+wrongCards =
+new Set();
 
-        setTimeout(
-          () => {
+score = 0;
 
-            document.getElementById(
-              "finalScore"
-            ).textContent = score;
+render();
 
-            document.getElementById(
-              "overlay"
-            ).classList.add("show");
+}
 
-          },
-          450
-        );
 
-      }
+/* =========================================
+   UPDATE UI
+========================================= */
 
-    }
+function updateUI() {
 
+document.getElementById(
+"score"
+).textContent =
+score;
 
-    /* =========================================
-       CLEAR SELECTED
-    ========================================= */
+document.getElementById(
+"solvedCount"
+).textContent =
+solved.size;
 
-    function clearSelected() {
+document.getElementById(
+"progressText"
+).textContent =
+`${solved.size} / ${WORDS.length}`;
 
-      selected = [];
+const progress =
+(
+solved.size /
+WORDS.length
+) * 100;
 
-      wrongCards.clear();
+document.getElementById(
+"progressBar"
+).style.width =
+`${progress}%`;
 
-      render();
-    }
+const unsolvedCount =
+cards.length - solved.size;
 
+document.getElementById(
+"checkBtn"
+).disabled =
+selected.length !==
+unsolvedCount ||
+unsolvedCount === 0;
 
-    /* =========================================
-       NEW GAME
-    ========================================= */
+document.getElementById(
+"clearBtn"
+).disabled =
+selected.length === 0;
 
-    function newGame() {
+}
 
-      document.getElementById(
-        "overlay"
-      ).classList.remove("show");
 
+/* =========================================
+   START
+========================================= */
 
-      cards =
-        shuffle(WORDS);
+newGame();
 
-
-      selected = [];
-
-      solved =
-        new Set();
-
-      wrongCards =
-        new Set();
-
-      score = 0;
-
-
-      render();
-    }
-
-
-    /* =========================================
-       UPDATE UI
-    ========================================= */
-
-    function updateUI() {
-
-      document.getElementById(
-        "score"
-      ).textContent = score;
-
-
-      document.getElementById(
-        "solvedCount"
-      ).textContent =
-        solved.size;
-
-
-      document.getElementById(
-        "progressText"
-      ).textContent =
-        `${solved.size} / ${WORDS.length}`;
-
-
-      const progress =
-        (
-          solved.size /
-          WORDS.length
-        ) * 100;
-
-
-      document.getElementById(
-        "progressBar"
-      ).style.width =
-        `${progress}%`;
-
-
-      const unsolvedCount =
-        cards.length - solved.size;
-
-
-      document.getElementById(
-        "checkBtn"
-      ).disabled =
-        selected.length !==
-        unsolvedCount ||
-        unsolvedCount === 0;
-
-
-      document.getElementById(
-        "clearBtn"
-      ).disabled =
-        selected.length === 0;
-    }
-
-
-    /* =========================================
-       START GAME
-    ========================================= */
-
-    newGame();
-
-  </script>
+</script>
 
 </body>
 </html>
